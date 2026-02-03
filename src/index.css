@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700;800;900&family=Crimson+Pro:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,78 +6,80 @@
 
 /* The General Spore - Dark Mystical Design System
    Deep purples, bioluminescent accents, mysterious forest atmosphere
-   All colors are HSL for consistency
+   Enhanced with glass morphism and rich visual effects
 */
 
 @layer base {
   :root {
-    /* Dark mystical theme - always dark */
-    --background: 270 30% 5%;
-    --foreground: 240 20% 95%;
+    /* Dark mystical theme - deeper and richer */
+    --background: 265 35% 3%;
+    --foreground: 220 25% 96%;
 
-    --card: 270 25% 8%;
-    --card-foreground: 240 20% 95%;
+    --card: 265 30% 7%;
+    --card-foreground: 220 25% 96%;
 
-    --popover: 270 28% 10%;
-    --popover-foreground: 240 20% 95%;
+    --popover: 265 32% 9%;
+    --popover-foreground: 220 25% 96%;
 
-    /* Primary - Deep mystical purple */
-    --primary: 280 70% 50%;
+    /* Primary - Deep mystical purple - more vibrant */
+    --primary: 280 75% 55%;
     --primary-foreground: 0 0% 100%;
 
     /* Secondary - Forest midnight */
-    --secondary: 260 30% 15%;
-    --secondary-foreground: 240 20% 90%;
+    --secondary: 260 35% 12%;
+    --secondary-foreground: 220 20% 92%;
 
     /* Muted - Shadowy depths */
-    --muted: 265 20% 12%;
-    --muted-foreground: 250 15% 60%;
+    --muted: 265 25% 10%;
+    --muted-foreground: 250 18% 58%;
 
-    /* Accent - Bioluminescent glow */
-    --accent: 160 100% 45%;
-    --accent-foreground: 270 30% 5%;
+    /* Accent - Bioluminescent glow - more vivid cyan */
+    --accent: 175 100% 50%;
+    --accent-foreground: 265 35% 3%;
 
-    /* Spore gold - for highlights */
-    --spore-gold: 45 90% 55%;
-    --spore-gold-foreground: 270 30% 5%;
+    /* Spore gold - for highlights - richer */
+    --spore-gold: 42 95% 58%;
+    --spore-gold-foreground: 265 35% 3%;
 
     /* Mycelium cyan - network connections */
-    --mycelium: 185 80% 50%;
-    --mycelium-foreground: 270 30% 5%;
+    --mycelium: 185 85% 52%;
+    --mycelium-foreground: 265 35% 3%;
 
     /* Danger - contamination red */
-    --destructive: 0 75% 50%;
+    --destructive: 0 78% 52%;
     --destructive-foreground: 0 0% 100%;
 
     /* Success - healthy growth green */
-    --success: 140 70% 45%;
+    --success: 145 75% 48%;
     --success-foreground: 0 0% 100%;
 
-    --border: 270 20% 18%;
-    --input: 270 25% 12%;
-    --ring: 280 70% 50%;
+    --border: 265 25% 16%;
+    --input: 265 30% 10%;
+    --ring: 175 100% 50%;
 
     --radius: 0.75rem;
 
-    /* Gradient definitions */
-    --gradient-mystical: linear-gradient(135deg, hsl(280 70% 50%) 0%, hsl(260 80% 35%) 50%, hsl(185 80% 50%) 100%);
-    --gradient-glow: linear-gradient(180deg, hsl(160 100% 45% / 0.2) 0%, transparent 100%);
-    --gradient-dark: linear-gradient(180deg, hsl(270 30% 5%) 0%, hsl(270 35% 3%) 100%);
+    /* Enhanced gradient definitions */
+    --gradient-mystical: linear-gradient(135deg, hsl(280 75% 55%) 0%, hsl(260 85% 40%) 40%, hsl(175 100% 50%) 100%);
+    --gradient-glow: linear-gradient(180deg, hsl(175 100% 50% / 0.25) 0%, transparent 100%);
+    --gradient-dark: linear-gradient(180deg, hsl(265 35% 3%) 0%, hsl(265 40% 1%) 100%);
+    --gradient-glass: linear-gradient(135deg, hsl(265 30% 15% / 0.4) 0%, hsl(265 30% 8% / 0.2) 100%);
 
-    /* Shadow definitions */
-    --shadow-glow: 0 0 30px hsl(160 100% 45% / 0.3);
-    --shadow-mystical: 0 10px 40px hsl(280 70% 50% / 0.2);
-    --shadow-deep: 0 25px 50px -12px hsl(270 30% 2% / 0.8);
+    /* Enhanced shadow definitions */
+    --shadow-glow: 0 0 40px hsl(175 100% 50% / 0.35);
+    --shadow-mystical: 0 15px 50px hsl(280 75% 55% / 0.25);
+    --shadow-deep: 0 30px 60px -15px hsl(265 40% 2% / 0.9);
+    --shadow-glass: 0 8px 32px hsl(265 40% 2% / 0.5);
 
     /* Sidebar - darker cave depths */
-    --sidebar-background: 270 35% 4%;
-    --sidebar-foreground: 240 20% 90%;
-    --sidebar-primary: 280 70% 50%;
+    --sidebar-background: 265 40% 3%;
+    --sidebar-foreground: 220 25% 92%;
+    --sidebar-primary: 280 75% 55%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 160 100% 45%;
-    --sidebar-accent-foreground: 270 30% 5%;
-    --sidebar-border: 270 20% 12%;
-    --sidebar-ring: 280 70% 50%;
+    --sidebar-accent: 175 100% 50%;
+    --sidebar-accent-foreground: 265 35% 3%;
+    --sidebar-border: 265 25% 12%;
+    --sidebar-ring: 280 75% 55%;
   }
 
   /* No light mode - mystical apps stay dark */
@@ -99,9 +101,10 @@
     @apply bg-background text-foreground antialiased;
     font-family: 'Crimson Pro', serif;
     background-image: 
-      radial-gradient(ellipse at 20% 30%, hsl(280 70% 15% / 0.3) 0%, transparent 50%),
-      radial-gradient(ellipse at 80% 70%, hsl(160 100% 20% / 0.15) 0%, transparent 40%),
-      radial-gradient(ellipse at 50% 100%, hsl(185 80% 15% / 0.2) 0%, transparent 50%);
+      radial-gradient(ellipse at 15% 25%, hsl(280 75% 20% / 0.35) 0%, transparent 45%),
+      radial-gradient(ellipse at 85% 75%, hsl(175 100% 25% / 0.2) 0%, transparent 35%),
+      radial-gradient(ellipse at 50% 100%, hsl(185 85% 20% / 0.25) 0%, transparent 45%),
+      radial-gradient(ellipse at 90% 10%, hsl(42 95% 30% / 0.1) 0%, transparent 30%);
     background-attachment: fixed;
   }
 
@@ -112,69 +115,127 @@
 }
 
 @layer components {
-  /* Bioluminescent glow effect */
+  /* Glass morphism card */
+  .glass-card {
+    @apply relative overflow-hidden rounded-xl;
+    background: linear-gradient(135deg, hsl(265 30% 12% / 0.6) 0%, hsl(265 30% 8% / 0.4) 100%);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid hsl(175 100% 50% / 0.15);
+    box-shadow: 
+      0 8px 32px hsl(265 40% 2% / 0.5),
+      inset 0 1px 0 hsl(175 100% 50% / 0.1);
+  }
+
+  .glass-card::before {
+    content: '';
+    @apply absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(175 100% 50% / 0.15) 0%, transparent 50%);
+  }
+
+  .glass-card:hover::before {
+    @apply opacity-100;
+  }
+
+  /* Bioluminescent glow effect - enhanced */
   .glow {
-    box-shadow: var(--shadow-glow);
+    box-shadow: 
+      var(--shadow-glow),
+      0 0 60px hsl(175 100% 50% / 0.2);
   }
 
   .glow-text {
-    text-shadow: 0 0 20px hsl(160 100% 45% / 0.5);
+    text-shadow: 
+      0 0 30px hsl(175 100% 50% / 0.6),
+      0 0 60px hsl(175 100% 50% / 0.3);
   }
 
   .glow-purple {
-    box-shadow: 0 0 30px hsl(280 70% 50% / 0.4);
+    box-shadow: 
+      0 0 35px hsl(280 75% 55% / 0.5),
+      0 0 70px hsl(280 75% 55% / 0.25);
+    transition: box-shadow 0.3s ease;
   }
 
-  /* Mystical card with subtle animation */
+  .glow-purple:hover {
+    box-shadow: 
+      0 0 45px hsl(280 75% 55% / 0.6),
+      0 0 90px hsl(280 75% 55% / 0.35);
+  }
+
+  /* Mystical card with subtle animation - enhanced */
   .mystical-card {
-    @apply relative overflow-hidden rounded-lg border border-border/50 bg-card/80 backdrop-blur-sm;
-    box-shadow: var(--shadow-deep);
+    @apply relative overflow-hidden rounded-xl border border-border/40 bg-card/90 backdrop-blur-md;
+    box-shadow: 
+      var(--shadow-deep),
+      inset 0 1px 0 hsl(175 100% 50% / 0.05);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .mystical-card::before {
     content: '';
-    @apply absolute inset-0 opacity-0 transition-opacity duration-500;
-    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(160 100% 45% / 0.1) 0%, transparent 50%);
+    @apply absolute inset-0 opacity-0 transition-opacity duration-500 pointer-events-none;
+    background: radial-gradient(circle at var(--mouse-x, 50%) var(--mouse-y, 50%), hsl(175 100% 50% / 0.12) 0%, transparent 50%);
   }
 
   .mystical-card:hover::before {
     @apply opacity-100;
   }
 
-  /* Spore pattern overlay */
+  .mystical-card:hover {
+    border-color: hsl(175 100% 50% / 0.3);
+    box-shadow: 
+      var(--shadow-deep),
+      0 0 40px hsl(175 100% 50% / 0.15),
+      inset 0 1px 0 hsl(175 100% 50% / 0.1);
+  }
+
+  /* Spore pattern overlay - enhanced */
   .spore-pattern {
     background-image: 
-      radial-gradient(circle at 20% 80%, hsl(280 70% 30% / 0.1) 2px, transparent 2px),
-      radial-gradient(circle at 80% 20%, hsl(160 100% 45% / 0.08) 1px, transparent 1px),
-      radial-gradient(circle at 40% 40%, hsl(185 80% 50% / 0.05) 1.5px, transparent 1.5px);
-    background-size: 100px 100px, 80px 80px, 120px 120px;
+      radial-gradient(circle at 20% 80%, hsl(280 75% 35% / 0.15) 2px, transparent 2px),
+      radial-gradient(circle at 80% 20%, hsl(175 100% 50% / 0.12) 1.5px, transparent 1.5px),
+      radial-gradient(circle at 40% 40%, hsl(185 85% 52% / 0.08) 2px, transparent 2px),
+      radial-gradient(circle at 60% 70%, hsl(42 95% 58% / 0.06) 1px, transparent 1px);
+    background-size: 100px 100px, 80px 80px, 120px 120px, 150px 150px;
+    animation: sporeFloat 20s linear infinite;
   }
 
-  /* Mycelium network lines */
+  @keyframes sporeFloat {
+    0% {
+      background-position: 0 0, 0 0, 0 0, 0 0;
+    }
+    100% {
+      background-position: 100px 100px, -80px 80px, 120px -120px, -150px 150px;
+    }
+  }
+
+  /* Mycelium network lines - enhanced */
   .mycelium-lines {
     background-image: 
-      linear-gradient(45deg, hsl(160 100% 45% / 0.03) 1px, transparent 1px),
-      linear-gradient(-45deg, hsl(280 70% 50% / 0.03) 1px, transparent 1px);
-    background-size: 40px 40px;
+      linear-gradient(45deg, hsl(175 100% 50% / 0.04) 1px, transparent 1px),
+      linear-gradient(-45deg, hsl(280 75% 55% / 0.04) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(42 95% 58% / 0.02) 1px, transparent 1px);
+    background-size: 40px 40px, 40px 40px, 80px 80px;
   }
 
-  /* Gradient text */
+  /* Gradient text - enhanced */
   .gradient-text {
     @apply bg-clip-text text-transparent;
     background-image: var(--gradient-mystical);
   }
 
-  /* Pulse animation for live elements */
+  /* Pulse animation for live elements - enhanced */
   .pulse-glow {
     animation: pulseGlow 3s ease-in-out infinite;
   }
 
   @keyframes pulseGlow {
     0%, 100% {
-      box-shadow: 0 0 20px hsl(160 100% 45% / 0.3);
+      box-shadow: 0 0 25px hsl(175 100% 50% / 0.35);
     }
     50% {
-      box-shadow: 0 0 40px hsl(160 100% 45% / 0.5);
+      box-shadow: 0 0 50px hsl(175 100% 50% / 0.55);
     }
   }
 
@@ -188,11 +249,28 @@
       transform: translateY(0);
     }
     50% {
-      transform: translateY(-10px);
+      transform: translateY(-15px);
     }
   }
 
-  /* Shimmer effect for loading states */
+  /* Fade in animation */
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* Shimmer effect for loading states - enhanced */
   .shimmer {
     @apply relative overflow-hidden;
   }
@@ -200,7 +278,7 @@
   .shimmer::after {
     content: '';
     @apply absolute inset-0;
-    background: linear-gradient(90deg, transparent, hsl(160 100% 45% / 0.1), transparent);
+    background: linear-gradient(90deg, transparent, hsl(175 100% 50% / 0.15), transparent);
     animation: shimmer 2s infinite;
   }
 
@@ -211,6 +289,28 @@
     100% {
       transform: translateX(100%);
     }
+  }
+
+  /* Glow border effect */
+  .glow-border {
+    position: relative;
+  }
+
+  .glow-border::after {
+    content: '';
+    @apply absolute inset-0 rounded-xl pointer-events-none;
+    padding: 2px;
+    background: var(--gradient-mystical);
+    -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.5;
+    transition: opacity 0.3s ease;
+  }
+
+  .glow-border:hover::after {
+    opacity: 1;
   }
 }
 
