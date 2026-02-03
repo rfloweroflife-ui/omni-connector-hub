@@ -75,82 +75,90 @@ const Index = () => {
         <HeroSection />
         
         {/* Features Section */}
-        <section className="py-24 px-4">
-          <div className="container max-w-7xl mx-auto">
-            <div className="text-center mb-16">
-              <Badge variant="outline" className="mb-4 border-accent/50 text-accent">
-                <Sparkles className="w-3 h-3 mr-1" />
+        <section className="py-28 px-4 relative">
+          <div className="absolute inset-0 spore-pattern opacity-20" />
+          <div className="container max-w-7xl mx-auto relative">
+            <div className="text-center mb-20">
+              <Badge variant="outline" className="mb-6 border-accent/50 text-accent bg-accent/10 backdrop-blur-sm px-4 py-1.5">
+                <Sparkles className="w-4 h-4 mr-2" />
                 Everything You Need
               </Badge>
-              <h2 className="text-4xl md:text-5xl font-display font-semibold mb-4">
-                Your Complete <span className="gradient-text">Mycology Platform</span>
+              <h2 className="text-4xl md:text-6xl font-display font-bold mb-6">
+                Your Complete <span className="gradient-text glow-text">Mycology Platform</span>
               </h2>
-              <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+              <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
                 From your first spore syringe to advanced cultivation techniques, 
                 we've built the tools to support your entire journey.
               </p>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
               {features.map((feature, index) => (
-                <FeatureCard key={index} {...feature} />
+                <div key={index} className="animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <FeatureCard {...feature} />
+                </div>
               ))}
             </div>
           </div>
         </section>
 
         {/* AI Assistant Highlight */}
-        <section className="py-24 px-4 relative overflow-hidden">
-          <div className="absolute inset-0 spore-pattern opacity-50" />
+        <section className="py-28 px-4 relative overflow-hidden">
+          <div className="absolute inset-0 mycelium-lines opacity-30" />
+          <div className="absolute top-1/2 left-0 w-96 h-96 bg-accent/10 rounded-full blur-[150px]" />
+          <div className="absolute bottom-0 right-0 w-80 h-80 bg-primary/15 rounded-full blur-[120px]" />
+          
           <div className="container max-w-7xl mx-auto relative">
-            <div className="mystical-card p-8 md:p-12">
-              <div className="grid md:grid-cols-2 gap-12 items-center">
+            <div className="glass-card p-10 md:p-14">
+              <div className="grid md:grid-cols-2 gap-14 items-center">
                 <div>
-                  <Badge className="mb-4 bg-accent/20 text-accent border-accent/30">
-                    <Mic className="w-3 h-3 mr-1" />
+                  <Badge className="mb-6 bg-accent/20 text-accent border-accent/30 px-4 py-1.5">
+                    <Mic className="w-4 h-4 mr-2" />
                     Voice Enabled
                   </Badge>
-                  <h2 className="text-3xl md:text-4xl font-display font-semibold mb-4">
+                  <h2 className="text-4xl md:text-5xl font-display font-bold mb-6">
                     Meet Your AI <span className="text-accent glow-text">Mycology Guide</span>
                   </h2>
-                  <p className="text-muted-foreground mb-6 text-lg">
+                  <p className="text-muted-foreground mb-8 text-lg leading-relaxed">
                     Ask anything about mushroom cultivation. Our AI expert is trained on 
                     thousands of grows, scientific papers, and cultivation guides. 
                     Speak naturally or type your questions.
                   </p>
-                  <ul className="space-y-3 mb-8">
-                    <li className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-accent" />
-                      <span>Instant answers to cultivation questions</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-accent" />
-                      <span>Photo-based contamination diagnosis</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-accent" />
-                      <span>Personalized growing recommendations</span>
-                    </li>
-                    <li className="flex items-center gap-3">
-                      <div className="w-2 h-2 rounded-full bg-accent" />
-                      <span>Voice conversations with ElevenLabs</span>
-                    </li>
+                  <ul className="space-y-4 mb-10">
+                    {[
+                      "Instant answers to cultivation questions",
+                      "Photo-based contamination diagnosis",
+                      "Personalized growing recommendations",
+                      "Voice conversations with ElevenLabs"
+                    ].map((item, i) => (
+                      <li key={i} className="flex items-center gap-4 group">
+                        <div className="w-3 h-3 rounded-full bg-accent shadow-lg shadow-accent/50 group-hover:scale-125 transition-transform" />
+                        <span className="text-foreground/90">{item}</span>
+                      </li>
+                    ))}
                   </ul>
                   <Link to="/chat">
-                    <Button size="lg" className="glow-purple">
+                    <Button size="lg" className="glow-purple font-medium group">
                       <MessageCircle className="w-5 h-5 mr-2" />
                       Start Chatting
-                      <ArrowRight className="w-4 h-4 ml-2" />
+                      <ArrowRight className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </Link>
                 </div>
                 <div className="relative">
-                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/20 via-accent/10 to-mycelium/20 p-8 flex items-center justify-center">
-                    <div className="text-center">
-                      <div className="w-24 h-24 rounded-full bg-accent/20 mx-auto mb-6 flex items-center justify-center pulse-glow">
-                        <Sparkles className="w-12 h-12 text-accent" />
+                  <div className="aspect-square rounded-2xl bg-gradient-to-br from-primary/25 via-accent/15 to-mycelium/20 p-10 flex items-center justify-center relative overflow-hidden">
+                    {/* Animated rings */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="w-64 h-64 rounded-full border border-accent/20 animate-pulse" />
+                      <div className="absolute w-48 h-48 rounded-full border border-primary/30 animate-pulse" style={{ animationDelay: '0.5s' }} />
+                      <div className="absolute w-32 h-32 rounded-full border border-accent/40 animate-pulse" style={{ animationDelay: '1s' }} />
+                    </div>
+                    
+                    <div className="text-center relative z-10">
+                      <div className="w-28 h-28 rounded-full bg-gradient-to-br from-accent/30 to-primary/30 mx-auto mb-6 flex items-center justify-center pulse-glow backdrop-blur-sm">
+                        <Sparkles className="w-14 h-14 text-accent" />
                       </div>
-                      <p className="text-lg font-medium mb-2">AI Assistant</p>
+                      <p className="text-xl font-display font-semibold mb-2 text-foreground">AI Assistant</p>
                       <p className="text-sm text-muted-foreground">Always learning, always available</p>
                     </div>
                   </div>
@@ -161,33 +169,41 @@ const Index = () => {
         </section>
 
         {/* Subscription CTA */}
-        <section className="py-24 px-4">
-          <div className="container max-w-4xl mx-auto text-center">
-            <Badge variant="outline" className="mb-4 border-spore-gold/50 text-spore-gold">
-              <Star className="w-3 h-3 mr-1" />
-              Premium Experience
-            </Badge>
-            <h2 className="text-3xl md:text-4xl font-display font-semibold mb-4">
-              Complete Hand-Holding for <span className="text-spore-gold">New Growers</span>
-            </h2>
-            <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Not sure where to start? Our subscription service guides you through 
-              every step from inoculation to harvest with weekly check-ins and 
-              personalized support.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link to="/subscribe">
-                <Button size="lg" variant="outline" className="border-spore-gold/50 text-spore-gold hover:bg-spore-gold/10">
-                  View Plans
-                  <ArrowRight className="w-4 h-4 ml-2" />
-                </Button>
-              </Link>
-              <Link to="/learn">
-                <Button size="lg" variant="ghost">
-                  <BookOpen className="w-4 h-4 mr-2" />
-                  Free Guides
-                </Button>
-              </Link>
+        <section className="py-28 px-4 relative">
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-primary/5 to-transparent" />
+          <div className="container max-w-5xl mx-auto relative">
+            <div className="glass-card p-12 md:p-16 text-center relative overflow-hidden">
+              {/* Decorative elements */}
+              <div className="absolute top-0 left-1/4 w-40 h-40 bg-spore-gold/10 rounded-full blur-[80px]" />
+              <div className="absolute bottom-0 right-1/4 w-48 h-48 bg-accent/10 rounded-full blur-[100px]" />
+              
+              <Badge variant="outline" className="mb-6 border-spore-gold/50 text-spore-gold bg-spore-gold/10 backdrop-blur-sm px-4 py-1.5 relative z-10">
+                <Star className="w-4 h-4 mr-2 fill-spore-gold" />
+                Premium Experience
+              </Badge>
+              <h2 className="text-4xl md:text-5xl font-display font-bold mb-6 relative z-10">
+                Complete Hand-Holding for <span className="text-spore-gold" style={{ textShadow: '0 0 30px hsl(42 95% 58% / 0.5)' }}>New Growers</span>
+              </h2>
+              <p className="text-xl text-muted-foreground mb-10 max-w-2xl mx-auto leading-relaxed relative z-10">
+                Not sure where to start? Our subscription service guides you through 
+                every step from inoculation to harvest with weekly check-ins and 
+                personalized support from our AI and expert team.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-6 justify-center relative z-10">
+                <Link to="/subscribe">
+                  <Button size="lg" className="bg-spore-gold text-spore-gold-foreground hover:bg-spore-gold/90 font-medium shadow-lg shadow-spore-gold/30 hover:shadow-spore-gold/50 transition-all">
+                    <Star className="w-5 h-5 mr-2" />
+                    View Plans
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </Button>
+                </Link>
+                <Link to="/learn">
+                  <Button size="lg" variant="outline" className="border-foreground/20 hover:bg-foreground/5">
+                    <BookOpen className="w-5 h-5 mr-2" />
+                    Free Guides
+                  </Button>
+                </Link>
+              </div>
             </div>
           </div>
         </section>
