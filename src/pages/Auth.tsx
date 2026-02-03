@@ -1,17 +1,168 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useSearchParams, Link } from "react-router-dom";
-import { Leaf, Mail, Lock, User, ArrowRight } from "lucide-react";
+import { useSearchParams, Link, useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { useAuth } from "@/hooks/useAuth";
+import { Leaf, Mail, Lock, User, ArrowRight, Loader2, AlertCircle } from "lucide-react";
+import { z } from "zod";
+
+// Validation schemas
+const emailSchema = z.string().email("Please enter a valid email address");
+const passwordSchema = z.string().min(6, "Password must be at least 6 characters");
+const nameSchema = z.string().min(1, "Name is required").max(100, "Name is too long");
 
 const Auth = () => {
   const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const { user, loading: authLoading, signIn, signUp } = useAuth();
+  
   const defaultTab = searchParams.get("mode") === "signup" ? "signup" : "signin";
   
   const [isLoading, setIsLoading] = useState(false);
+  const [signInEmail, setSignInEmail] = useState("");
+  const [signInPassword, setSignInPassword] = useState("");
+  const [signUpName, setSignUpName] = useState("");
+  const [signUpEmail, setSignUpEmail] = useState("");
+  const [signUpPassword, setSignUpPassword] = useState("");
+  const [errors, setErrors] = useState<Record<string, string>>({});
+
+  // Redirect if already logged in
+  useEffect(() => {
+    if (user && !authLoading) {
+      navigate("/");
+    }
+  }, [user, authLoading, navigate]);
+
+  const validateSignIn = () => {
+    const newErrors: Record<string, string> = {};
+    
+    try {
+      emailSchema.parse(signInEmail);
+    } catch (e) {
+      if (e instanceof z.ZodError) {
+        newErrors.signInEmail = e.errors[0].message;
+      }
+    }
+    
+    try {
+      passwordSchema.parse(signInPassword);
+    } catch (e) {
+      if (e instanceof z.ZodError) {
+        newErrors.signInPassword = e.errors[0].message;
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateSignUp = () => {
+    const newErrors: Record<string, string> = {};
+    
+    try {
+      nameSchema.parse(signUpName);
+    } catch (e) {
+      if (e instanceof z.ZodError) {
+        newErrors.signUpName = e.errors[0].message;
+      }
+    }
+    
+    try {
+      emailSchema.parse(signUpEmail);
+    } catch (e) {
+      if (e instanceof z.ZodError) {
+        newErrors.signUpEmail = e.errors[0].message;
+      }
+    }
+    
+    try {
+      passwordSchema.parse(signUpPassword);
+    } catch (e) {
+      if (e instanceof z.ZodError) {
+        newErrors.signUpPassword = e.errors[0].message;
+      }
+    }
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSignIn = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateSignIn()) return;
+    
+    setIsLoading(true);
+    
+    const { error } = await signIn(signInEmail, signInPassword);
+    
+    if (error) {
+      let message = error.message;
+      if (error.message.includes("Invalid login credentials")) {
+        message = "Invalid email or password. Please try again.";
+      }
+      toast({
+        variant: "destructive",
+        title: "Sign in failed",
+        description: message,
+      });
+    } else {
+      toast({
+        title: "Welcome back!",
+        description: "You've successfully signed in.",
+      });
+      navigate("/");
+    }
+    
+    setIsLoading(false);
+  };
+
+  const handleSignUp = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!validateSignUp()) return;
+    
+    setIsLoading(true);
+    
+    const { data, error } = await signUp(signUpEmail, signUpPassword, signUpName);
+    
+    if (error) {
+      let message = error.message;
+      if (error.message.includes("already registered")) {
+        message = "This email is already registered. Try signing in instead.";
+      }
+      toast({
+        variant: "destructive",
+        title: "Sign up failed",
+        description: message,
+      });
+    } else if (data.user && !data.session) {
+      // Email confirmation required
+      toast({
+        title: "Check your email",
+        description: "We've sent you a confirmation link. Please verify your email to continue.",
+      });
+    } else {
+      toast({
+        title: "Welcome to The General Spore!",
+        description: "Your account has been created successfully.",
+      });
+      navigate("/");
+    }
+    
+    setIsLoading(false);
+  };
+
+  if (authLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="w-8 h-8 animate-spin text-accent" />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
@@ -40,7 +191,7 @@ const Auth = () => {
             </TabsList>
             
             <TabsContent value="signin">
-              <form className="space-y-4">
+              <form onSubmit={handleSignIn} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signin-email">Email</Label>
                   <div className="relative">
@@ -50,8 +201,17 @@ const Auth = () => {
                       type="email" 
                       placeholder="you@example.com"
                       className="pl-10"
+                      value={signInEmail}
+                      onChange={(e) => setSignInEmail(e.target.value)}
+                      disabled={isLoading}
                     />
                   </div>
+                  {errors.signInEmail && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.signInEmail}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signin-password">Password</Label>
@@ -62,12 +222,24 @@ const Auth = () => {
                       type="password" 
                       placeholder="••••••••"
                       className="pl-10"
+                      value={signInPassword}
+                      onChange={(e) => setSignInPassword(e.target.value)}
+                      disabled={isLoading}
                     />
                   </div>
+                  {errors.signInPassword && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.signInPassword}
+                    </p>
+                  )}
                 </div>
                 <Button className="w-full glow-purple" disabled={isLoading}>
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : null}
                   Sign In
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  {!isLoading && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
                 <Button variant="link" className="w-full text-muted-foreground">
                   Forgot password?
@@ -76,7 +248,7 @@ const Auth = () => {
             </TabsContent>
             
             <TabsContent value="signup">
-              <form className="space-y-4">
+              <form onSubmit={handleSignUp} className="space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="signup-name">Name</Label>
                   <div className="relative">
@@ -86,8 +258,17 @@ const Auth = () => {
                       type="text" 
                       placeholder="Your name"
                       className="pl-10"
+                      value={signUpName}
+                      onChange={(e) => setSignUpName(e.target.value)}
+                      disabled={isLoading}
                     />
                   </div>
+                  {errors.signUpName && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.signUpName}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-email">Email</Label>
@@ -98,8 +279,17 @@ const Auth = () => {
                       type="email" 
                       placeholder="you@example.com"
                       className="pl-10"
+                      value={signUpEmail}
+                      onChange={(e) => setSignUpEmail(e.target.value)}
+                      disabled={isLoading}
                     />
                   </div>
+                  {errors.signUpEmail && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.signUpEmail}
+                    </p>
+                  )}
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="signup-password">Password</Label>
@@ -110,12 +300,24 @@ const Auth = () => {
                       type="password" 
                       placeholder="••••••••"
                       className="pl-10"
+                      value={signUpPassword}
+                      onChange={(e) => setSignUpPassword(e.target.value)}
+                      disabled={isLoading}
                     />
                   </div>
+                  {errors.signUpPassword && (
+                    <p className="text-sm text-destructive flex items-center gap-1">
+                      <AlertCircle className="w-3 h-3" />
+                      {errors.signUpPassword}
+                    </p>
+                  )}
                 </div>
                 <Button className="w-full glow-purple" disabled={isLoading}>
+                  {isLoading ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : null}
                   Create Account
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  {!isLoading && <ArrowRight className="w-4 h-4 ml-2" />}
                 </Button>
                 <p className="text-xs text-center text-muted-foreground">
                   By signing up, you agree to our{" "}
