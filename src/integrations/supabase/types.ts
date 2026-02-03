@@ -73,6 +73,212 @@ export type Database = {
         }
         Relationships: []
       }
+      grow_entries: {
+        Row: {
+          created_at: string
+          entry_date: string
+          humidity: number | null
+          id: string
+          images: string[] | null
+          journal_id: string
+          notes: string | null
+          temperature: number | null
+          title: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_date?: string
+          humidity?: number | null
+          id?: string
+          images?: string[] | null
+          journal_id: string
+          notes?: string | null
+          temperature?: number | null
+          title?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          entry_date?: string
+          humidity?: number | null
+          id?: string
+          images?: string[] | null
+          journal_id?: string
+          notes?: string | null
+          temperature?: number | null
+          title?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "grow_entries_journal_id_fkey"
+            columns: ["journal_id"]
+            isOneToOne: false
+            referencedRelation: "grow_journals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      grow_journals: {
+        Row: {
+          created_at: string
+          id: string
+          inoculation_date: string | null
+          is_public: boolean | null
+          notes: string | null
+          species: string
+          status: string | null
+          substrate: string | null
+          title: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          inoculation_date?: string | null
+          is_public?: boolean | null
+          notes?: string | null
+          species: string
+          status?: string | null
+          substrate?: string | null
+          title: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          inoculation_date?: string | null
+          is_public?: boolean | null
+          notes?: string | null
+          species?: string
+          status?: string | null
+          substrate?: string | null
+          title?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      order_items: {
+        Row: {
+          created_at: string
+          id: string
+          order_id: string
+          price_at_purchase: number
+          product_id: string | null
+          quantity: number
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          order_id: string
+          price_at_purchase: number
+          product_id?: string | null
+          quantity: number
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          order_id?: string
+          price_at_purchase?: number
+          product_id?: string | null
+          quantity?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "order_items_order_id_fkey"
+            columns: ["order_id"]
+            isOneToOne: false
+            referencedRelation: "orders"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "order_items_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      orders: {
+        Row: {
+          created_at: string
+          id: string
+          shipping_address: Json | null
+          status: string | null
+          stripe_payment_intent_id: string | null
+          total: number
+          updated_at: string
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          shipping_address?: Json | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          total: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          shipping_address?: Json | null
+          status?: string | null
+          stripe_payment_intent_id?: string | null
+          total?: number
+          updated_at?: string
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      products: {
+        Row: {
+          category: string
+          created_at: string
+          description: string | null
+          id: string
+          image_url: string | null
+          is_active: boolean | null
+          name: string
+          price: number
+          sale_price: number | null
+          stock_quantity: number | null
+          updated_at: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name: string
+          price: number
+          sale_price?: number | null
+          stock_quantity?: number | null
+          updated_at?: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          image_url?: string | null
+          is_active?: boolean | null
+          name?: string
+          price?: number
+          sale_price?: number | null
+          stock_quantity?: number | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -103,6 +309,45 @@ export type Database = {
         }
         Relationships: []
       }
+      subscriptions: {
+        Row: {
+          cancel_at_period_end: boolean | null
+          created_at: string
+          current_period_end: string | null
+          current_period_start: string | null
+          id: string
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          tier: Database["public"]["Enums"]["subscription_tier"]
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          cancel_at_period_end?: boolean | null
+          created_at?: string
+          current_period_end?: string | null
+          current_period_start?: string | null
+          id?: string
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          tier?: Database["public"]["Enums"]["subscription_tier"]
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -111,7 +356,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      [_ in never]: never
+      subscription_tier: "free" | "cultivator" | "mycologist" | "master"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -238,6 +483,8 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      subscription_tier: ["free", "cultivator", "mycologist", "master"],
+    },
   },
 } as const
