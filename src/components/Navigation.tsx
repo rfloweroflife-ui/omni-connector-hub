@@ -1,7 +1,16 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { 
   Menu, 
   Leaf, 
@@ -11,13 +20,22 @@ import {
   ShoppingBag, 
   Users,
   LogIn,
-  Sparkles
+  Sparkles,
+  LogOut,
+  User,
+  Settings,
+  Crown
 } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/use-toast";
 
 const Navigation = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
+  const { user, loading, signOut } = useAuth();
+  const { toast } = useToast();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -36,6 +54,38 @@ const Navigation = () => {
   ];
 
   const isActive = (path: string) => location.pathname === path;
+
+  const handleSignOut = async () => {
+    const { error } = await signOut();
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Error signing out",
+        description: error.message,
+      });
+    } else {
+      toast({
+        title: "Signed out",
+        description: "You've been successfully signed out.",
+      });
+      navigate("/");
+    }
+  };
+
+  const getUserInitials = () => {
+    if (!user?.email) return "U";
+    return user.email.substring(0, 2).toUpperCase();
+  };
+
+  const getUserDisplayName = () => {
+    if (user?.user_metadata?.display_name) {
+      return user.user_metadata.display_name;
+    }
+    if (user?.email) {
+      return user.email.split("@")[0];
+    }
+    return "User";
+  };
 
   return (
     <header 
@@ -81,20 +131,68 @@ const Navigation = () => {
           ))}
         </nav>
 
-        {/* Auth Buttons */}
+        {/* Auth Section */}
         <div className="flex items-center gap-3">
-          <Link to="/auth" className="hidden sm:block">
-            <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
-              <LogIn className="w-4 h-4 mr-2" />
-              Sign In
-            </Button>
-          </Link>
-          <Link to="/auth?mode=signup" className="hidden sm:block">
-            <Button size="sm" className="glow-purple font-medium">
-              <Sparkles className="w-4 h-4 mr-2" />
-              Get Started
-            </Button>
-          </Link>
+          {!loading && !user && (
+            <>
+              <Link to="/auth" className="hidden sm:block">
+                <Button variant="ghost" size="sm" className="text-muted-foreground hover:text-foreground">
+                  <LogIn className="w-4 h-4 mr-2" />
+                  Sign In
+                </Button>
+              </Link>
+              <Link to="/auth?mode=signup" className="hidden sm:block">
+                <Button size="sm" className="glow-purple font-medium">
+                  <Sparkles className="w-4 h-4 mr-2" />
+                  Get Started
+                </Button>
+              </Link>
+            </>
+          )}
+
+          {!loading && user && (
+            <>
+              <Link to="/subscribe" className="hidden sm:block">
+                <Button variant="ghost" size="sm" className="text-spore-gold hover:text-spore-gold hover:bg-spore-gold/10">
+                  <Crown className="w-4 h-4 mr-2" />
+                  Upgrade
+                </Button>
+              </Link>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="relative h-9 w-9 rounded-full">
+                    <Avatar className="h-9 w-9">
+                      <AvatarFallback className="bg-primary/20 text-primary text-sm">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent className="w-56" align="end" forceMount>
+                  <DropdownMenuLabel className="font-normal">
+                    <div className="flex flex-col space-y-1">
+                      <p className="text-sm font-medium leading-none">{getUserDisplayName()}</p>
+                      <p className="text-xs leading-none text-muted-foreground">{user.email}</p>
+                    </div>
+                  </DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={() => navigate("/journal")}>
+                    <FlaskConical className="w-4 h-4 mr-2" />
+                    My Journals
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/subscribe")}>
+                    <Crown className="w-4 h-4 mr-2" />
+                    Subscription
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive focus:text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    Sign Out
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
 
           {/* Mobile Menu */}
           <Sheet open={isOpen} onOpenChange={setIsOpen}>
@@ -110,6 +208,24 @@ const Navigation = () => {
                 </div>
                 <span className="font-display text-lg font-semibold">The General Spore</span>
               </div>
+
+              {/* User info in mobile menu */}
+              {user && (
+                <div className="mb-6 p-4 rounded-lg bg-card/50 border border-border/50">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-10 w-10">
+                      <AvatarFallback className="bg-primary/20 text-primary">
+                        {getUserInitials()}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1 min-w-0">
+                      <p className="font-medium truncate">{getUserDisplayName()}</p>
+                      <p className="text-sm text-muted-foreground truncate">{user.email}</p>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <nav className="flex flex-col gap-2">
                 {navLinks.map((link) => (
                   <Link 
@@ -131,18 +247,43 @@ const Navigation = () => {
                   </Link>
                 ))}
                 <div className="border-t border-border/50 my-4" />
-                <Link to="/auth" onClick={() => setIsOpen(false)}>
-                  <Button variant="ghost" className="w-full justify-start h-12 text-base">
-                    <LogIn className="w-5 h-5 mr-3" />
-                    Sign In
-                  </Button>
-                </Link>
-                <Link to="/auth?mode=signup" onClick={() => setIsOpen(false)}>
-                  <Button className="w-full glow-purple h-12 text-base font-medium mt-2">
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Get Started
-                  </Button>
-                </Link>
+                
+                {!user ? (
+                  <>
+                    <Link to="/auth" onClick={() => setIsOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start h-12 text-base">
+                        <LogIn className="w-5 h-5 mr-3" />
+                        Sign In
+                      </Button>
+                    </Link>
+                    <Link to="/auth?mode=signup" onClick={() => setIsOpen(false)}>
+                      <Button className="w-full glow-purple h-12 text-base font-medium mt-2">
+                        <Sparkles className="w-5 h-5 mr-2" />
+                        Get Started
+                      </Button>
+                    </Link>
+                  </>
+                ) : (
+                  <>
+                    <Link to="/subscribe" onClick={() => setIsOpen(false)}>
+                      <Button variant="ghost" className="w-full justify-start h-12 text-base text-spore-gold">
+                        <Crown className="w-5 h-5 mr-3" />
+                        Upgrade Plan
+                      </Button>
+                    </Link>
+                    <Button 
+                      variant="ghost" 
+                      className="w-full justify-start h-12 text-base text-destructive hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => {
+                        handleSignOut();
+                        setIsOpen(false);
+                      }}
+                    >
+                      <LogOut className="w-5 h-5 mr-3" />
+                      Sign Out
+                    </Button>
+                  </>
+                )}
               </nav>
             </SheetContent>
           </Sheet>
