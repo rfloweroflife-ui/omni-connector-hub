@@ -147,7 +147,7 @@ const Auth = () => {
       });
     } else {
       toast({
-        title: "Welcome to The General Spore!",
+        title: "Welcome to ADI~DAS!",
         description: "Your account has been created successfully.",
       });
       navigate("/");
@@ -180,8 +180,8 @@ const Auth = () => {
               <Leaf className="w-6 h-6 text-primary-foreground" />
             </div>
           </Link>
-          <CardTitle className="font-display text-2xl">The General Spore</CardTitle>
-          <CardDescription>Your mycology journey starts here</CardDescription>
+          <CardTitle className="font-display text-2xl">ADI~DAS</CardTitle>
+          <CardDescription className="text-xs tracking-widest uppercase">All Day I Dream About Spores</CardDescription>
         </CardHeader>
         <CardContent>
           <Tabs defaultValue={defaultTab}>
