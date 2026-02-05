@@ -101,9 +101,12 @@ const Navigation = () => {
           <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-primary via-accent to-mycelium flex items-center justify-center group-hover:scale-110 transition-all duration-300 shadow-lg shadow-primary/30 group-hover:shadow-accent/40">
             <Leaf className="w-6 h-6 text-primary-foreground" />
           </div>
-          <div className="hidden sm:block">
-            <span className="font-display text-xl font-semibold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80 group-hover:from-accent group-hover:to-primary transition-all duration-300">
-              The General Spore
+          <div className="hidden sm:flex flex-col leading-tight">
+            <span className="font-display text-xl font-bold tracking-wide bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80 group-hover:from-accent group-hover:to-primary transition-all duration-300">
+              ADI~DAS
+            </span>
+            <span className="text-[10px] text-muted-foreground tracking-widest uppercase">
+              All Day I Dream About Spores
             </span>
           </div>
         </Link>
@@ -206,7 +209,10 @@ const Navigation = () => {
                 <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary via-accent to-mycelium flex items-center justify-center">
                   <Leaf className="w-5 h-5 text-primary-foreground" />
                 </div>
-                <span className="font-display text-lg font-semibold">The General Spore</span>
+                <div className="flex flex-col leading-tight">
+                  <span className="font-display text-lg font-bold">ADI~DAS</span>
+                  <span className="text-[9px] text-muted-foreground tracking-widest uppercase">All Day I Dream About Spores</span>
+                </div>
               </div>
 
               {/* User info in mobile menu */}

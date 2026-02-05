@@ -19,6 +19,7 @@ import { Link } from "react-router-dom";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import FeatureCard from "@/components/FeatureCard";
+import TestimonialsCarousel from "@/components/TestimonialsCarousel";
 import Footer from "@/components/Footer";
 
 const Index = () => {
@@ -167,6 +168,9 @@ const Index = () => {
             </div>
           </div>
         </section>
+
+        {/* Testimonials Carousel */}
+        <TestimonialsCarousel />
 
         {/* Subscription CTA */}
         <section className="py-28 px-4 relative">

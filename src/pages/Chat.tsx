@@ -29,7 +29,7 @@ const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Welcome to The General Spore! 🍄 I'm your AI mycology expert, here to help with all your cultivation questions.\n\nWhether you're just starting with your first spore syringe or troubleshooting a tricky grow, I'm here to guide you. Ask me about:\n\n- **Cultivation techniques** - agar work, grain spawn, substrate prep\n- **Troubleshooting** - contamination identification, stalled growth\n- **Species-specific advice** - oyster, lion's mane, shiitake, and more\n- **Equipment recommendations** - flow hoods, pressure cookers, fruiting chambers\n\nWhat would you like to explore today?"
+      content: "Welcome to ADI~DAS! 🍄 I'm your AI mycology expert, here to help with all your cultivation questions.\n\nWhether you're just starting with your first spore syringe or troubleshooting a tricky grow, I'm here to guide you. Ask me about:\n\n- **Cultivation techniques** - agar work, grain spawn, substrate prep\n- **Troubleshooting** - contamination identification, stalled growth\n- **Species-specific advice** - oyster, lion's mane, shiitake, and more\n- **Equipment recommendations** - flow hoods, pressure cookers, fruiting chambers\n\nWhat would you like to explore today?"
     }
   ]);
   const [input, setInput] = useState("");

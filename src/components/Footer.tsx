@@ -35,9 +35,13 @@ const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-8 mb-12">
           {/* Brand */}
           <div className="col-span-2 md:col-span-1">
-            <Link to="/" className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-3 mb-4">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary via-accent to-mycelium flex items-center justify-center">
                 <Leaf className="w-5 h-5 text-primary-foreground" />
+              </div>
+              <div className="flex flex-col leading-tight">
+                <span className="font-display text-lg font-bold">ADI~DAS</span>
+                <span className="text-[8px] text-muted-foreground tracking-widest uppercase">All Day I Dream About Spores</span>
               </div>
             </Link>
             <p className="text-sm text-muted-foreground mb-4">
@@ -114,7 +118,7 @@ const Footer = () => {
         </div>
 
         <div className="border-t border-border/40 pt-8 text-center text-sm text-muted-foreground">
-          <p>© {new Date().getFullYear()} The General Spore. All rights reserved.</p>
+          <p>© {new Date().getFullYear()} ADI~DAS (All Day I Dream About Spores). All rights reserved.</p>
           <p className="mt-1">For microscopy and research purposes only.</p>
         </div>
       </div>
