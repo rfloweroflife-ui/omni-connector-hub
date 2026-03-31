@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -8,13 +8,18 @@ import ReactMarkdown from "react-markdown";
 import { 
   Send, 
   Sparkles, 
-  Mic, 
-  MicOff, 
-  Image as ImageIcon, 
+  Volume2,
+  VolumeX,
   Loader2,
   User,
   Bot,
-  Leaf
+  Leaf,
+  Zap,
+  BookOpen,
+  Bug,
+  Droplets,
+  Mic,
+  StopCircle
 } from "lucide-react";
 import Navigation from "@/components/Navigation";
 
@@ -24,17 +29,21 @@ interface Message {
 }
 
 const CHAT_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/mycology-chat`;
+const TTS_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/elevenlabs-tts`;
 
 const Chat = () => {
   const [messages, setMessages] = useState<Message[]>([
     {
       role: "assistant",
-      content: "Welcome to ADI~DAS! 🍄 I'm your AI mycology expert, here to help with all your cultivation questions.\n\nWhether you're just starting with your first spore syringe or troubleshooting a tricky grow, I'm here to guide you. Ask me about:\n\n- **Cultivation techniques** - agar work, grain spawn, substrate prep\n- **Troubleshooting** - contamination identification, stalled growth\n- **Species-specific advice** - oyster, lion's mane, shiitake, and more\n- **Equipment recommendations** - flow hoods, pressure cookers, fruiting chambers\n\nWhat would you like to explore today?"
+      content: "Welcome to **ADI~DAS**! 🍄 I'm your AI mycology expert, here to help with all your cultivation questions.\n\nWhether you're just starting with your first spore syringe or troubleshooting a tricky grow, I'm here to guide you. Ask me about:\n\n- **Cultivation techniques** — agar work, grain spawn, substrate prep\n- **Troubleshooting** — contamination identification, stalled growth\n- **Species-specific advice** — oyster, lion's mane, shiitake, and more\n- **Equipment recommendations** — flow hoods, pressure cookers, fruiting chambers\n\nYou can also 🔊 **listen** to my responses read aloud!\n\nWhat would you like to explore today?"
     }
   ]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [playingIndex, setPlayingIndex] = useState<number | null>(null);
+  const [ttsLoading, setTtsLoading] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -65,7 +74,6 @@ const Chat = () => {
     let buffer = "";
     let assistantContent = "";
 
-    // Add empty assistant message that we'll update
     setMessages(prev => [...prev, { role: "assistant", content: "" }]);
 
     while (true) {
@@ -101,7 +109,7 @@ const Chat = () => {
             });
           }
         } catch {
-          // Incomplete JSON, will get more data
+          // Incomplete JSON
         }
       }
     }
@@ -118,25 +126,84 @@ const Chat = () => {
     setIsLoading(true);
 
     try {
-      await streamChat(newMessages.slice(1)); // Skip the initial welcome message
+      await streamChat(newMessages.slice(1));
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
         description: error instanceof Error ? error.message : "Failed to get response",
       });
-      // Remove the empty assistant message if there was an error
       setMessages(prev => prev.filter((_, i) => i !== prev.length - 1));
     } finally {
       setIsLoading(false);
     }
   };
 
+  const handlePlayTTS = useCallback(async (text: string, index: number) => {
+    // Stop current audio if playing
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current = null;
+    }
+
+    if (playingIndex === index) {
+      setPlayingIndex(null);
+      return;
+    }
+
+    // Strip markdown for cleaner TTS
+    const cleanText = text
+      .replace(/#{1,6}\s/g, '')
+      .replace(/\*\*/g, '')
+      .replace(/\*/g, '')
+      .replace(/`/g, '')
+      .replace(/\[([^\]]+)\]\([^)]+\)/g, '$1')
+      .replace(/[-•]\s/g, '')
+      .slice(0, 2000);
+
+    setTtsLoading(index);
+    try {
+      const response = await fetch(TTS_URL, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+        },
+        body: JSON.stringify({ text: cleanText }),
+      });
+
+      if (!response.ok) throw new Error("TTS failed");
+
+      const audioBlob = await response.blob();
+      const audioUrl = URL.createObjectURL(audioBlob);
+      const audio = new Audio(audioUrl);
+      audioRef.current = audio;
+      
+      audio.onended = () => {
+        setPlayingIndex(null);
+        audioRef.current = null;
+        URL.revokeObjectURL(audioUrl);
+      };
+
+      setPlayingIndex(index);
+      await audio.play();
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Voice unavailable",
+        description: "Could not generate audio. Please try again.",
+      });
+    } finally {
+      setTtsLoading(null);
+    }
+  }, [playingIndex, toast]);
+
   const suggestedQuestions = [
-    "How do I start with agar work?",
-    "What causes green mold contamination?",
-    "Best substrate for oyster mushrooms?",
-    "How to maintain proper humidity?",
+    { text: "How do I start with agar work?", icon: BookOpen },
+    { text: "What causes green mold contamination?", icon: Bug },
+    { text: "Best substrate for oyster mushrooms?", icon: Droplets },
+    { text: "How to maintain proper humidity?", icon: Zap },
   ];
 
   return (
@@ -145,16 +212,23 @@ const Chat = () => {
       
       <div className="flex-1 flex flex-col max-w-4xl mx-auto w-full">
         {/* Header */}
-        <div className="border-b border-border/40 p-4">
+        <div className="border-b border-border/40 p-4 backdrop-blur-sm">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary via-accent to-mycelium flex items-center justify-center pulse-glow">
-              <Sparkles className="w-5 h-5 text-primary-foreground" />
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-primary via-accent to-mycelium flex items-center justify-center pulse-glow shadow-lg shadow-accent/30">
+              <Sparkles className="w-6 h-6 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="font-display font-semibold">Mycology Expert</h1>
-              <p className="text-sm text-muted-foreground">AI-powered cultivation assistant</p>
+            <div className="flex-1">
+              <h1 className="font-display text-lg font-semibold tracking-wide">Mycology Expert</h1>
+              <p className="text-xs text-muted-foreground flex items-center gap-2">
+                AI-powered cultivation assistant
+                <span className="flex items-center gap-1 text-accent">
+                  <Volume2 className="w-3 h-3" />
+                  Voice enabled
+                </span>
+              </p>
             </div>
-            <Badge variant="outline" className="ml-auto border-accent/50 text-accent">
+            <Badge variant="outline" className="border-accent/50 text-accent bg-accent/10 shadow-sm shadow-accent/20">
+              <span className="w-2 h-2 rounded-full bg-accent mr-2 animate-pulse" />
               Online
             </Badge>
           </div>
@@ -166,12 +240,12 @@ const Chat = () => {
             {messages.map((message, index) => (
               <div
                 key={index}
-                className={`flex gap-3 ${message.role === "user" ? "flex-row-reverse" : ""}`}
+                className={`flex gap-3 animate-fade-in ${message.role === "user" ? "flex-row-reverse" : ""}`}
               >
-                <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+                <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 shadow-lg ${
                   message.role === "user" 
-                    ? "bg-primary" 
-                    : "bg-gradient-to-br from-primary via-accent to-mycelium"
+                    ? "bg-primary shadow-primary/30" 
+                    : "bg-gradient-to-br from-primary via-accent to-mycelium shadow-accent/30"
                 }`}>
                   {message.role === "user" ? (
                     <User className="w-4 h-4 text-primary-foreground" />
@@ -180,10 +254,10 @@ const Chat = () => {
                   )}
                 </div>
                 <div className={`flex-1 max-w-[80%] ${message.role === "user" ? "text-right" : ""}`}>
-                  <div className={`inline-block rounded-2xl px-4 py-3 ${
+                  <div className={`inline-block rounded-2xl px-5 py-3.5 ${
                     message.role === "user"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-card border border-border/50"
+                      ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20"
+                      : "glass-card"
                   }`}>
                     {message.role === "assistant" ? (
                       <div className="prose prose-invert prose-sm max-w-none">
@@ -193,58 +267,94 @@ const Chat = () => {
                       <p>{message.content}</p>
                     )}
                   </div>
+                  {/* TTS Button for assistant messages */}
+                  {message.role === "assistant" && message.content && (
+                    <div className="mt-2 flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="h-7 px-2 text-xs text-muted-foreground hover:text-accent hover:bg-accent/10 rounded-full"
+                        onClick={() => handlePlayTTS(message.content, index)}
+                        disabled={ttsLoading === index}
+                      >
+                        {ttsLoading === index ? (
+                          <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />
+                        ) : playingIndex === index ? (
+                          <VolumeX className="w-3.5 h-3.5 mr-1" />
+                        ) : (
+                          <Volume2 className="w-3.5 h-3.5 mr-1" />
+                        )}
+                        {ttsLoading === index ? "Loading..." : playingIndex === index ? "Stop" : "Listen"}
+                      </Button>
+                    </div>
+                  )}
                 </div>
               </div>
             ))}
             {isLoading && messages[messages.length - 1]?.content === "" && (
               <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary via-accent to-mycelium flex items-center justify-center pulse-glow">
+                <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary via-accent to-mycelium flex items-center justify-center pulse-glow shadow-lg shadow-accent/30">
                   <Leaf className="w-4 h-4 text-primary-foreground" />
                 </div>
-                <div className="bg-card border border-border/50 rounded-2xl px-4 py-3">
-                  <Loader2 className="w-5 h-5 animate-spin text-accent" />
+                <div className="glass-card rounded-2xl px-5 py-3.5">
+                  <div className="flex gap-1.5">
+                    <span className="w-2 h-2 bg-accent rounded-full animate-bounce" />
+                    <span className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0.15s' }} />
+                    <span className="w-2 h-2 bg-accent rounded-full animate-bounce" style={{ animationDelay: '0.3s' }} />
+                  </div>
                 </div>
               </div>
             )}
           </div>
         </ScrollArea>
 
-        {/* Suggested questions (only show if few messages) */}
+        {/* Suggested questions */}
         {messages.length <= 2 && (
-          <div className="px-4 py-2 flex flex-wrap gap-2">
-            {suggestedQuestions.map((question, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                size="sm"
-                className="text-xs border-border/50 hover:border-accent/50 hover:text-accent"
-                onClick={() => setInput(question)}
-              >
-                {question}
-              </Button>
-            ))}
+          <div className="px-4 py-3">
+            <p className="text-xs text-muted-foreground mb-2 font-medium tracking-wide uppercase">Quick questions</p>
+            <div className="grid grid-cols-2 gap-2">
+              {suggestedQuestions.map((question, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  size="sm"
+                  className="justify-start text-xs border-border/50 hover:border-accent/50 hover:text-accent hover:bg-accent/5 h-auto py-2.5 px-3 transition-all"
+                  onClick={() => setInput(question.text)}
+                >
+                  <question.icon className="w-3.5 h-3.5 mr-2 flex-shrink-0" />
+                  <span className="text-left">{question.text}</span>
+                </Button>
+              ))}
+            </div>
           </div>
         )}
 
         {/* Input */}
-        <div className="border-t border-border/40 p-4">
+        <div className="border-t border-border/40 p-4 backdrop-blur-sm">
           <form onSubmit={handleSubmit} className="flex gap-2">
-            <Input
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Ask about cultivation, contamination, species..."
-              className="flex-1 bg-input/50 border-border/50 focus:border-accent"
-              disabled={isLoading}
-            />
-            <Button type="submit" disabled={isLoading || !input.trim()} className="glow-purple">
+            <div className="flex-1 relative">
+              <Input
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about cultivation, contamination, species..."
+                className="pr-4 bg-input/50 border-border/50 focus:border-accent focus:ring-1 focus:ring-accent/30 h-12 rounded-xl"
+                disabled={isLoading}
+              />
+            </div>
+            <Button 
+              type="submit" 
+              disabled={isLoading || !input.trim()} 
+              className="glow-purple h-12 w-12 rounded-xl"
+              size="icon"
+            >
               {isLoading ? (
-                <Loader2 className="w-4 h-4 animate-spin" />
+                <Loader2 className="w-5 h-5 animate-spin" />
               ) : (
-                <Send className="w-4 h-4" />
+                <Send className="w-5 h-5" />
               )}
             </Button>
           </form>
-          <p className="text-xs text-muted-foreground mt-2 text-center">
+          <p className="text-[10px] text-muted-foreground mt-2 text-center tracking-wide">
             For research and educational purposes only. Not medical advice.
           </p>
         </div>
