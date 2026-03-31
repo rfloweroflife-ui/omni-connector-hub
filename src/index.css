@@ -312,7 +312,6 @@
   .glow-border:hover::after {
     opacity: 1;
   }
-}
 
   /* Soundwave animation for voice */
   .soundwave {
