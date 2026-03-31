@@ -51,6 +51,7 @@ const Navigation = () => {
     { href: "/journal", label: "Grow Journal", icon: FlaskConical },
     { href: "/shop", label: "Shop", icon: ShoppingBag },
     { href: "/community", label: "Community", icon: Users },
+    { href: "/subscribe", label: "Subscribe", icon: Crown },
   ];
 
   const isActive = (path: string) => location.pathname === path;
